@@ -1,4 +1,5 @@
 ﻿using QRClient.Models;
+using QRClient.Repository;
 using System.Drawing;
 using System.Text.Json;
 using ZXing;
@@ -9,6 +10,11 @@ namespace QRClient.QREngine
 {
     public class QREngine : IQREngine
     {
+        IS3BucketRepository s3BucketRepository;
+        public QREngine(IS3BucketRepository _s3BucketRepository)
+        {
+            s3BucketRepository = _s3BucketRepository;
+        }
         public string QRGenerator(IFormCollection formCollection, IWebHostEnvironment _webHostEnvironment)
         {
             var writter = new QRCodeWriter();
@@ -23,7 +29,7 @@ namespace QRClient.QREngine
             var matrix = resultBit;
             int scale = 2;
             Bitmap result = new Bitmap(matrix.Width * scale, matrix.Height * scale);
-            
+
             for (int i = 0; i < matrix.Height; i++)
             {
                 for (int j = 0; j < matrix.Width; j++)
@@ -38,8 +44,9 @@ namespace QRClient.QREngine
                     }
                 }
             }
-            string webRootPath = _webHostEnvironment.WebRootPath;
-            result.Save(webRootPath + $"\\Images\\{barCodeData.QRstring}.png");
+            //string webRootPath = _webHostEnvironment.WebRootPath;
+            //result.Save(webRootPath + $"\\Images\\{barCodeData.QRstring}.png");
+            s3BucketRepository.InsertIntoRepo(result);
             return $"\\Images\\{barCodeData.QRstring}.png";
         }
 
