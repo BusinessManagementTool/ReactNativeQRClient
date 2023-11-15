@@ -6,14 +6,14 @@ namespace QRClient.Repository
 {
     public class S3BucketRepository : IS3BucketRepository
     {
-        public void InsertIntoRepo(Bitmap imageBitmap)
+        public void InsertIntoRepo(Bitmap imageBitmap, string qRstring)
         {
             var accessKeyId = "your_access_key_id";
             var secretAccessKey = "your_secret_access_key";
             var region = Amazon.RegionEndpoint.USEast1; // Change the region to your desired region
 
             var bucketName = "your_s3_bucket_name";
-            var keyName = "your_image_name.png";
+            var keyName = $"{qRstring}.png";
 
             // Convert the bitmap to a MemoryStream
             using (MemoryStream stream = new MemoryStream())

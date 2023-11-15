@@ -46,7 +46,7 @@ namespace QRClient.QREngine
             }
             //string webRootPath = _webHostEnvironment.WebRootPath;
             //result.Save(webRootPath + $"\\Images\\{barCodeData.QRstring}.png");
-            s3BucketRepository.InsertIntoRepo(result);
+            s3BucketRepository.InsertIntoRepo(result,barCodeData.QRstring);
             return $"\\Images\\{barCodeData.QRstring}.png";
         }
 
