@@ -4,6 +4,6 @@ namespace QRClient.Repository
 {
     public interface IS3BucketRepository
     {
-        void InsertIntoRepo(Bitmap imageBitmap, string qRstring);
+        void InsertIntoBucket(Bitmap imageBitmap, string qRstring);
     }
 }
