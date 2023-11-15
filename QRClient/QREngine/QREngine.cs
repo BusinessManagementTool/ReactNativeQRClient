@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using QRClient.Models;
 using System.Drawing;
+using System.Text.Json;
 using ZXing;
 using ZXing.QrCode;
 using ZXing.Windows.Compatibility;
@@ -11,10 +12,18 @@ namespace QRClient.QREngine
         public string QRGenerator(IFormCollection formCollection, IWebHostEnvironment _webHostEnvironment)
         {
             var writter = new QRCodeWriter();
-            var resultBit = writter.encode(formCollection["QRstring"], ZXing.BarcodeFormat.QR_CODE, 200, 200);
+            BarCodeData barCodeData = new BarCodeData
+            {
+                QRstring = formCollection["QRstring"],
+                CostPrice = Convert.ToDouble(formCollection["costprice"]),
+                SellingPrice = Convert.ToDouble(formCollection["sellingprice"])
+            };
+            var jsonContent = JsonSerializer.Serialize(barCodeData);
+            var resultBit = writter.encode(jsonContent, ZXing.BarcodeFormat.QR_CODE, 200, 200);
             var matrix = resultBit;
             int scale = 2;
             Bitmap result = new Bitmap(matrix.Width * scale, matrix.Height * scale);
+            
             for (int i = 0; i < matrix.Height; i++)
             {
                 for (int j = 0; j < matrix.Width; j++)
@@ -30,8 +39,8 @@ namespace QRClient.QREngine
                 }
             }
             string webRootPath = _webHostEnvironment.WebRootPath;
-            result.Save(webRootPath + $"\\Images\\{formCollection["QRstring"]}.png");
-            return $"\\Images\\{formCollection["QRstring"]}.png";
+            result.Save(webRootPath + $"\\Images\\{barCodeData.QRstring}.png");
+            return $"\\Images\\{barCodeData.QRstring}.png";
         }
 
         public void QRReader(IWebHostEnvironment _webHostEnvironment)
